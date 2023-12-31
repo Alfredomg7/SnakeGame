@@ -36,7 +36,6 @@ class Snake {
             this._body.pop();
         } else {
             this._hasEaten = false;
-            console.log('Snake Grew, New Length:', this._body.length);
         }
     
         this.checkCollisions();
@@ -73,7 +72,6 @@ class Snake {
             let newSegment = this.calculateNewSegmentPosition();
             this._body.push(newSegment);
             this._hasEaten = true;
-            console.log('Eating Food at:', food.x, food.y);
             return true;
          }
          return false;
