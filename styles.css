@@ -34,7 +34,7 @@ body {
 }
 
 #restartButton {
-    display: none;
+    visibility: hidden;
     padding: 10px 20px;
     font-size: 16px;
     background-color: #4caf50;
@@ -49,4 +49,6 @@ body {
     background-color: #45a049;
     transform: scale(1.05);
     font-weight: bold;
+    position: relative;
+    z-index: 1;
 }
