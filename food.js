@@ -14,8 +14,8 @@ class Food {
         this._columns = newColumns;
         
         // Reposition the food based on the new scale ensuring is within the new grid boundaries
-        this.x = Math.min((this.x / oldScale) * this._scale, this._canvas.width - this._scale);
-        this.y = Math.min((this.y / oldScale) * this._scale, this._canvas.height - this._scale);
+        this.x = Math.min((this.x / oldScale) * this._scale, (this._columns - 1) * this._scale);
+        this.y = Math.min((this.y / oldScale) * this._scale, (this._rows - 1) * this._scale);
     }
 
     // Places the food at a random location
