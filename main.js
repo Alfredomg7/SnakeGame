@@ -99,9 +99,7 @@ function displayGameOverMessage() {
 // Sets up the restart button functionality
 function setupRestartButton() {
     let restartButton = document.getElementById('restartButton');
-    console.log("RESTART BUTTON WILL BE VISIBLE")
     restartButton.style.visibility = 'visible';
-
     restartButton.onclick = function() {
         location.reload();
     };
