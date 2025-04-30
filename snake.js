@@ -8,7 +8,7 @@ class Snake {
         this._ySpeed = 0;
         this._hasEaten = false;
     }
-   
+
     // Draws the snake on the canvas
     draw() {
         // Clear the canvas where the snake moves
@@ -129,6 +129,10 @@ class Snake {
         const selfCollision = this.checkSelfCollision();
 
         return boundsCollision || selfCollision;
+    }
+
+    isPositionOccupied(x, y) {
+        return this._body.some(segment => segment.x === x && segment.y === y);
     }
 }
 

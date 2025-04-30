@@ -18,10 +18,24 @@ class Food {
         this.y = Math.min((this.y / oldScale) * this._scale, (this._rows - 1) * this._scale);
     }
 
-    // Places the food at a random location
-    spawn() {
-        this.x = Math.floor(Math.random() * this._columns) * this._scale;
-        this.y = Math.floor(Math.random() * this._rows) * this._scale;
+    // Places the food at a random location excluding the snake's body
+    spawn(snake = null) {
+        // Handle initial spawn without snake
+        if (!snake) {
+            this.x = Math.floor(Math.random() * this._columns) * this._scale;
+            this.y = Math.floor(Math.random() * this._rows) * this._scale;
+            return;
+        }
+
+        // Handle spawn with snake collision check
+        let newX, newY;
+        do {
+            newX = Math.floor(Math.random() * this._columns) * this._scale;
+            newY = Math.floor(Math.random() * this._rows) * this._scale;
+        } while (snake.isPositionOccupied(newX, newY));
+
+        this.x = newX;
+        this.y = newY;
     }
 
     // Draws the food on the canvas

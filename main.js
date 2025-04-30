@@ -76,7 +76,7 @@ function gameLoop() {
 
     // Check if the snake has eaten the food
     if (snake.eat(food)) {
-        food.spawn();
+        food.spawn(snake);
     }
 
     // Check for collision
