@@ -7,6 +7,8 @@ class Snake {
         this._xSpeed = this._scale;
         this._ySpeed = 0;
         this._hasEaten = false;
+        this._nextDirection = null;
+        this._currentDirection = 'Right';
     }
 
     // Draws the snake on the canvas
@@ -26,6 +28,31 @@ class Snake {
 
     // Updates the position of the snake
     update() {
+        if (this._nextDirection) {
+            this._currentDirection = this._nextDirection;
+            this._nextDirection = null;
+        
+            // Change the velocity based on the new direction
+            switch(this._currentDirection) {
+                case 'Up':
+                    this._xSpeed = 0;
+                    this._ySpeed = -this._scale;
+                    break;
+                case 'Down':
+                    this._xSpeed = 0;
+                    this._ySpeed = this._scale;
+                    break;
+                case 'Left':
+                    this._xSpeed = -this._scale;
+                    this._ySpeed = 0;
+                    break;
+                case 'Right':
+                    this._xSpeed = this._scale;
+                    this._ySpeed = 0;
+                    break;
+            }
+        }
+
         let newHead = {
             x: this._body[0].x + this._xSpeed,
             y: this._body[0].y + this._ySpeed
@@ -44,27 +71,15 @@ class Snake {
         this.checkCollisions();
     }    
 
-    // Changes the direction of the snake based on arrow key input
+    // Update the next direction from user input
     changeDirection(direction) {
-        // Change the velocity based on the direction
-        switch(direction) {
-            case 'Up':
-                this._xSpeed = 0;
-                this._ySpeed = -this._scale;
-                break;
-            case 'Down':
-                this._xSpeed = 0;
-                this._ySpeed = this._scale;
-                break;
-            case 'Left':
-                this._xSpeed = -this._scale;
-                this._ySpeed = 0;
-                break;
-            case 'Right':
-                this._xSpeed = this._scale;
-                this._ySpeed = 0;
-                break;
-        }
+        // Prevent 180 degree turns
+        if (this._currentDirection === 'Up' && direction === 'Down') return
+        if (this._currentDirection === 'Down' && direction === 'Up') return
+        if (this._currentDirection === 'Left' && direction === 'Right') return
+        if (this._currentDirection === 'Right' && direction === 'Left') return 
+
+        this._nextDirection = direction;
     }
 
     // Checks if the snake has eaten the food
