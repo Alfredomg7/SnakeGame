@@ -5,8 +5,9 @@ import Food from './food.js';
 // Setting up canvas context for drawing
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const updateFrequency = 15;
-let frameCounter = 0;
+let lastTime = 0;
+let accumulatedTime = 0;
+const moveInterval = 150; // milliseconds
 let scale;
 let rows;
 let columns
@@ -73,11 +74,15 @@ function setupResizeListener() {
 }
 
 // The main game loop function
-function gameLoop() {
-    frameCounter++;
+function gameLoop(currentTime) {
+    // Calculate the time elapsed since the last frame
+    if (!lastTime) lastTime = currentTime;
+    const deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+    accumulatedTime += deltaTime;
     
-    // Handle state updates
-    if (frameCounter % updateFrequency === 0) {
+    // Handle state updates based on the move interval
+    while (accumulatedTime >= moveInterval) {
         // Snake movement
         updateSnakePosition();
         
@@ -91,6 +96,8 @@ function gameLoop() {
             endGame();
             return;
         }
+
+        accumulatedTime -= moveInterval;
     }
 
     // Continue the game loop
