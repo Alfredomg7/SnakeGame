@@ -19,11 +19,16 @@ function determineScale(width, height) {
     return Math.floor(minDimension / 20);
 }
 
-// Control snake speed updating the snake position based on frameCounter
+// Control snake position update
 function updateSnakePosition() {
-    if (frameCounter % updateFrequency === 0) {
-        snake.update();
-    }
+    snake.update();
+    snake.draw();
+}
+
+// Control food respawn
+function respawnFood() {
+    food.spawn(snake);
+    food.draw();
 }
 
 // Change canvas size and layout components responsively
@@ -70,23 +75,26 @@ function setupResizeListener() {
 // The main game loop function
 function gameLoop() {
     frameCounter++;
-    updateSnakePosition();
-    snake.draw();
-    food.draw();
+    
+    // Handle state updates
+    if (frameCounter % updateFrequency === 0) {
+        // Snake movement
+        updateSnakePosition();
+        
+        // Food respawn
+        if (snake.eat(food)) {
+            respawnFood();
+        }
 
-    // Check if the snake has eaten the food
-    if (snake.eat(food)) {
-        food.spawn(snake);
+        // Collision detection
+        if (snake.checkCollisions()) {
+            endGame();
+            return;
+        }
     }
 
-    // Check for collision
-    if (snake.checkCollisions()) {
-        ('Collision Detected');
-        endGame();
-    } else {
-        // Rquest the next animation frame
-        requestAnimationFrame(gameLoop);
-    }
+    // Continue the game loop
+    requestAnimationFrame(gameLoop);
 }
 
 // Displays the Game Over message on the canvas

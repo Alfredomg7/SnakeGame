@@ -11,13 +11,16 @@ class Snake {
 
     // Draws the snake on the canvas
     draw() {
-        // Clear the canvas where the snake moves
-        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-
-           // Draw each segment of the snake
-        this._ctx.fillStyle = '#fff';
-        for (let i = 0; i < this._body.length; i++) {
-            this._ctx.fillRect(this._body[i].x, this._body[i].y, this._scale, this._scale);
+        // Draw the new head
+        const head = this._body[0];
+        this._ctx.fillStyle = "#fff";
+        this._ctx.fillRect(head.x, head.y, this._scale, this._scale);
+    
+        // Clear the tail if the snake hasn't eaten
+        if (!this._hasEaten) {
+            // Handle multi and single segment snake
+            const tail = this._body.length > 1 ? this._body[this._body.length - 1] : this.calculatePreviousHeadPosition();
+            this._ctx.clearRect(tail.x, tail.y, this._scale, this._scale);
         }
     }
 
@@ -93,13 +96,17 @@ class Snake {
         this._canvas = newCanvas;
         this._scale = newScale;
         
-        // Reposition the snake's head and recalculate its body
-        this._body = this._body.map(segment => {
-            return {
-                x: (segment.x / oldScale) * this._scale,
-                y: (segment.y / oldScale) * this._scale
+        // Reposition the snake's body and redraw it
+        for (let i = 0; i < this._body.length; i++) {
+            this._body[i] = {
+            x: (this._body[i].x / oldScale) * this._scale,
+            y: (this._body[i].y / oldScale) * this._scale
             };
-        });
+            
+            // Draw the segment at its new position
+            this._ctx.fillStyle = "#fff";
+            this._ctx.fillRect(this._body[i].x, this._body[i].y, this._scale, this._scale);
+        }
 
         // Update the speed based on the new scale immediately
         if (this._xSpeed !== 0) {
@@ -133,6 +140,15 @@ class Snake {
 
     isPositionOccupied(x, y) {
         return this._body.some(segment => segment.x === x && segment.y === y);
+    }
+
+    calculatePreviousHeadPosition() {
+        const head = this._body[0];
+        
+        return {
+            x: head.x - this._xSpeed,
+            y: head.y - this._ySpeed
+        };
     }
 }
 

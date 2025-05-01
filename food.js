@@ -4,10 +4,10 @@ class Food {
         this._scale = scale;
         this._rows = rows;
         this._columns = columns;
-        this.spawn(); 
+        this.spawn();
     }
 
-    adjustLayout(newScale,newRows,newColumns) {
+    adjustLayout(newScale, newRows, newColumns) {
         const oldScale = this._scale;
         this._scale = newScale;
         this._rows = newRows;
@@ -16,6 +16,7 @@ class Food {
         // Reposition the food based on the new scale ensuring is within the new grid boundaries
         this.x = Math.min((this.x / oldScale) * this._scale, (this._columns - 1) * this._scale);
         this.y = Math.min((this.y / oldScale) * this._scale, (this._rows - 1) * this._scale);
+        this.draw(); // Redraw the food at the new position
     }
 
     // Places the food at a random location excluding the snake's body
@@ -24,6 +25,7 @@ class Food {
         if (!snake) {
             this.x = Math.floor(Math.random() * this._columns) * this._scale;
             this.y = Math.floor(Math.random() * this._rows) * this._scale;
+            this.draw(); // Draw the food at the initial position
             return;
         }
 
