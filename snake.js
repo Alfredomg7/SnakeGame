@@ -12,17 +12,26 @@ class Snake {
     }
 
     // Draws the snake on the canvas
-    draw() {
-        // Draw the new head
-        const head = this._body[0];
+    draw(fullDraw = false) {
         this._ctx.fillStyle = "#fff";
-        this._ctx.fillRect(head.x, head.y, this._scale, this._scale);
-    
-        // Clear the tail if the snake hasn't eaten
-        if (!this._hasEaten) {
-            // Handle multi and single segment snake
-            const tail = this._body.length > 1 ? this._body[this._body.length - 1] : this.calculatePreviousHeadPosition();
-            this._ctx.clearRect(tail.x, tail.y, this._scale, this._scale);
+
+        if (fullDraw) {
+            // Draw the entire snake body
+            for (const segment of this._body) {
+                this._ctx.fillRect(segment.x, segment.y, this._scale, this._scale);
+            }
+        } else {
+            // Incrementally draw - only update head and tail
+            // Draw the new head
+            const head = this._body[0];
+            this._ctx.fillRect(head.x, head.y, this._scale, this._scale);
+        
+            // Clear the tail if the snake hasn't eaten
+            if (!this._hasEaten) {
+                // Handle multi and single segment snake
+                const tail = this._body.length > 1 ? this._body[this._body.length - 1] : this.calculatePreviousHeadPosition();
+                this._ctx.clearRect(tail.x, tail.y, this._scale, this._scale);
+            }
         }
     }
 
@@ -114,14 +123,13 @@ class Snake {
         // Reposition the snake's body and redraw it
         for (let i = 0; i < this._body.length; i++) {
             this._body[i] = {
-            x: (this._body[i].x / oldScale) * this._scale,
-            y: (this._body[i].y / oldScale) * this._scale
+                x: (this._body[i].x / oldScale) * this._scale,
+                y: (this._body[i].y / oldScale) * this._scale
             };
-            
-            // Draw the segment at its new position
-            this._ctx.fillStyle = "#fff";
-            this._ctx.fillRect(this._body[i].x, this._body[i].y, this._scale, this._scale);
         }
+
+        // Draw the complete snake at its new position
+        this.draw(true);
 
         // Update the speed based on the new scale immediately
         if (this._xSpeed !== 0) {

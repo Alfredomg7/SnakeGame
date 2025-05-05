@@ -5,10 +5,10 @@ class Game {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
-        this.status = 'idle'; 
         this.lastTime = 0;
         this.accumulatedTime = 0;
         this.moveInterval = 150; // milliseconds
+        this.status = 'running';
         this.scale = null;
         this.rows = null;
         this.columns = null;
@@ -24,6 +24,7 @@ class Game {
         this.setupGameComponents();
         this.setupControls();
         this.setupResizeListener();
+        this.setupPauseButton();
     }
 
     // Determine the scale based on canvas size
@@ -34,8 +35,8 @@ class Game {
 
     // Control snake position update
     updateSnakePosition() {
-        this.snake.update();
         this.snake.draw();
+        this.snake.update();
     }
 
     // Control food respawn
@@ -60,7 +61,19 @@ class Game {
         this.columns = this.canvas.width / this.scale;
 
         if (gameInitialized) {
-            // Adjust snake and food based on the new canvas size
+            // Adjust canvas based on the new scale
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            switch (this.status) {
+                case 'running':
+                    this.status = 'paused';
+                    break;
+                case 'paused':
+                    this.displayPauseMessage();
+                    break;
+                case 'over':
+                    this.displayGameOverMessage();
+                    break;
+            }
             this.food.adjustLayout(this.scale, this.rows, this.columns);
             this.snake.adjustLayout(this.canvas, this.scale);
         }
@@ -75,8 +88,17 @@ class Game {
     // Sets up the keyboard controls for the snake movement
     setupControls() {
         window.addEventListener('keydown', ((evt) => {
-            const direction = evt.key.replace('Arrow', '');
-            this.snake.changeDirection(direction);
+            // Handle direction changes
+            if (evt.key.includes('Arrow')) {
+                const direction = evt.key.replace('Arrow', '');
+                this.snake.changeDirection(direction);
+            }
+            
+            // Handle pause with 'p' or Space key
+            if ((evt.key === 'p' || evt.key === 'P' || evt.key === ' ') && 
+                (this.status === 'running' || this.status === 'paused')) {
+                this.togglePause();
+            }
         }));
     }
 
@@ -110,15 +132,33 @@ class Game {
 
             this.accumulatedTime -= this.moveInterval;
         }
-
         
         // Continue or end the game loop based on the status 
         if (this.status === 'running') {
-            requestAnimationFrame((time) => this.gameLoop(time)); // Continue the game loop
+            requestAnimationFrame((time) => this.gameLoop(time));
+        } else if (this.status === 'paused') {
+            this.pause();
+            return;
         } else if (this.status === 'over') {
-            this.endGame(); // End the game
+            this.end();
             return;
         }
+    }
+
+    // Toggle between pause and resume
+    togglePause() {
+        if (this.status === 'running') {
+            this.status = 'paused';
+        } else if (this.status === 'paused') {
+            this.resume();
+        }
+    }
+
+    // Displays the Pause message on the canvas
+    displayPauseMessage() {
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = '40px Arial'
+        this.ctx.fillText("Paused", this.canvas.width / 4, this.canvas.height / 2);
     }
 
     // Displays the Game Over message on the canvas
@@ -134,24 +174,58 @@ class Game {
         restartButton.style.visibility = 'visible';
         restartButton.onclick = () => {
             restartButton.style.visibility = 'hidden';
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.setupGameComponents();
-            this.lastTime = 0;
-            this.accumulatedTime = 0;
-            this.start();
+            this.status = 'running';
+            this.restart();
         };
     }
 
-    // Handles the end game scenario
-    endGame() {
-        this.displayGameOverMessage();
-        this.setupRestartButton();
+    // Sets up the pause button functionality
+    setupPauseButton() {
+        let pauseButton = document.getElementById('pauseButton');
+        pauseButton.onclick = () => {
+            if (this.status === 'running' || this.status === 'paused') {
+                this.togglePause();
+            }
+        };
     }
 
     // Start the game
     start() {
+        requestAnimationFrame((time) => this.gameLoop(time));
+    }
+
+    // Handle pause scenario
+    pause() {
+        document.getElementById('pauseButton').textContent = 'Resume';
+        this.displayPauseMessage();
+    }
+        
+    // Resume the game after a pause
+    resume() {
+        document.getElementById('pauseButton').textContent = 'Pause';
         this.status = 'running';
-        requestAnimationFrame((time) => this.gameLoop(time)); // Start the game loop
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.snake.draw(true);
+        this.food.draw();
+        this.lastTime = performance.now();
+        this.accumulatedTime = 0;
+                
+        requestAnimationFrame((time) => this.gameLoop(time, true));
+    }
+
+    // Handles the end game scenario
+    end() {
+        this.displayGameOverMessage();
+        this.setupRestartButton();
+    }
+
+    // Handles the restart functionality
+    restart() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.setupGameComponents();
+        this.lastTime = 0;
+        this.accumulatedTime = 0;
+        this.start();
     }
 }
 

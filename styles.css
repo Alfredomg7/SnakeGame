@@ -19,8 +19,46 @@ body {
     color: #333;
     text-align: center;
     font-family: 'Arial', sans-serif;
-    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6);
+}
+
+#buttonsContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    gap: 10px;
+    padding: 10px;
+}
+
+button {
+    width: 100px;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+#pauseButton {
+    background-color: #2196F3;
+}
+
+#pauseButton:hover {
+    background-color: #0b7dda;
+}
+
+#restartButton {
+    background-color: #4caf50;
+    visibility: hidden;
+}
+
+#restartButton:hover {
+    background-color: #45a049;
 }
 
 #gameCanvas {
@@ -31,24 +69,4 @@ body {
     background-color: #000;
     border: 3px solid #333;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-#restartButton {
-    visibility: hidden;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 20px;
-}
-
-#restartButton:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
-    font-weight: bold;
-    position: relative;
-    z-index: 1;
 }
