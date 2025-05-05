@@ -1,10 +1,12 @@
 import Snake from './snake.js';
 import Food from './food.js';
+import Score from './score.js';
 
 class Game {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
+        this.score = new Score();
         this.lastTime = 0;
         this.accumulatedTime = 0;
         this.moveInterval = 150; // milliseconds
@@ -43,6 +45,7 @@ class Game {
     respawnFood() {
         this.food.spawn(this.snake);
         this.food.draw();
+        this.score.increment();
     }
 
     // Change canvas size and layout components responsively
@@ -217,12 +220,14 @@ class Game {
     end() {
         this.displayGameOverMessage();
         this.setupRestartButton();
+        this.score.saveScoreHistory();
     }
 
     // Handles the restart functionality
     restart() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.setupGameComponents();
+        this.score.reset();
         this.lastTime = 0;
         this.accumulatedTime = 0;
         this.start();

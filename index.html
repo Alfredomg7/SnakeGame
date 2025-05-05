@@ -5,15 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game</title>
     <link rel="stylesheet" href="styles.css">
-
 </head>
 <body>
     <h1 id="gameTitle">Classic Snake Game</h1>
-    <div id="buttonsContainer"> 
-        <button id="pauseButton">Pause</button>
-        <button id="restartButton">Restart</button>
+    <div class="game-container">
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+        <div class="side-panel">
+            <div id="scoreContainer">
+                <div class="score-box">
+                    <span class="score-label">Score:</span>
+                    <span id="currentScore" class="score-value">0</span>
+                </div>
+                <div class="score-box">
+                    <span class="score-label">High Score:</span>
+                    <span id="highScore" class="score-value">0</span>
+                </div>
+            </div>
+            <div id="buttonsContainer"> 
+                <button id="pauseButton">Pause</button>
+                <button id="restartButton">Restart</button>
+            </div>
+        </div>
     </div>
-    <canvas id="gameCanvas"></canvas>
     <script type="module" src="main.js"></script>
 </body>
 </html>
